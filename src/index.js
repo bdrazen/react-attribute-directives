@@ -1,22 +1,20 @@
-import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import React from 'react';
 
-import styles from './styles.css'
+export default function(directives) {
 
-export default class ExampleComponent extends Component {
-  static propTypes = {
-    text: PropTypes.string
-  }
+  return function(WrappedComponent) {
 
-  render() {
-    const {
-      text
-    } = this.props
+    return function InjectDirectives(props) {
+      const initDirectives = (ref) => {
+        for (const key in props) {
+          if (props.hasOwnProperty(key) && typeof directives(ref)[key] === 'function') {
+            directives(ref)[key](props[key]);
+          }
+        }
+      }
+      const handleRef = (r) => initDirectives(r);
 
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
+      return <WrappedComponent ref={handleRef} directiveRef={handleRef} {...props} />;
+    }
   }
 }
