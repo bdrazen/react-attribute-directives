@@ -2,7 +2,7 @@
 
 > Attribute directives for React
 
-[![NPM](https://img.shields.io/npm/v/react-attribute-directives.svg)](https://www.npmjs.com/package/react-attribute-directives) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-attribute-directives.svg)](https://www.npmjs.com/package/react-attribute-directives) ![Minified Size](https://img.shields.io/bundlephobia/min/react-attribute-directives.svg?colorB=brightgreen)
 
 ## Install
 
@@ -12,8 +12,8 @@ npm install --save react-attribute-directives
 
 ## Usage
 
+> #### app-highlight.directive.jsx
 ```jsx
-// app-highlight.directive.jsx
 import ReactDOM from 'react-dom';
 
 export default (component) => (color) => {
@@ -22,10 +22,10 @@ export default (component) => (color) => {
 };
 ```
 
+> #### inject-directives.jsx
 ```jsx
-// inject-directives.jsx
-import appHighlight from './app-highlight.directive';
 import ReactDirectives from 'react-attribute-directives';
+import appHighlight from './app-highlight.directive';
 
 export default ReactDirectives((component) => ({
   appHighlight: appHighlight(component)
@@ -33,8 +33,8 @@ export default ReactDirectives((component) => ({
 
 ```
 
+> #### my-component.jsx
 ```jsx
-// my-component.jsx
 import React from 'react';
 import InjectDirectives from '../directives/inject-directives';
 
@@ -46,8 +46,8 @@ class MyComponent extends React.Component {
 export default InjectDirectives(MyComponent);
 ```
 
+> #### my-functional-component.jsx
 ```jsx
-// my-functional-component.jsx
 import React from 'react';
 import InjectDirectives from '../directives/inject-directives';
 
@@ -57,8 +57,8 @@ function MyFunctionalComponent(props) {
 export default InjectDirectives(MyFunctionalComponent);
 ```
 
+> #### App.js
 ```jsx
-// App.js
 import React, { Component } from 'react';
 import MyComponent from './app/components/my-component';
 import MyClassComponent from './app/components/my-class-component';
