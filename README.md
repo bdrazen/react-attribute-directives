@@ -19,7 +19,7 @@ import ReactDOM from 'react-dom';
 export default (component) => (color) => {
   const node = ReactDOM.findDOMNode(component);
   node.style.backgroundColor = color;
-}
+};
 ```
 
 ```jsx
@@ -52,7 +52,7 @@ import React from 'react';
 import InjectDirectives from '../directives/inject-directives';
 
 function MyFunctionalComponent(props) {
-  return <div ref={props.directiveRef} />
+  return <div ref={props.directiveRef} />; // Explicit ref required
 }
 export default InjectDirectives(MyFunctionalComponent);
 ```
