@@ -13,8 +13,10 @@ export default function(directives) {
         }
       }
       const handleRef = (r) => initDirectives(r);
+      const isFunctional = !WrappedComponent.prototype.render;
+      const refProp = { [isFunctional ? 'directiveRef' : 'ref']: handleRef };
 
-      return <WrappedComponent ref={handleRef} directiveRef={handleRef} {...props} />;
+      return <WrappedComponent {...refProp} {...props} />;
     }
   }
 }
