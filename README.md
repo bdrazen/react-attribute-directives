@@ -12,25 +12,55 @@ npm install --save react-attribute-directives
 
 ## Usage
 
-> #### app-highlight.directive.jsx
+> #### highlight.directive.jsx
 ```jsx
+import React from 'react';
 import ReactDOM from 'react-dom';
 
-export default (component) => (color) => {
-  const node = ReactDOM.findDOMNode(component);
-  node.style.backgroundColor = color;
-};
+export default (WrappedComponent) => (color) =>
+  function Highlight(props, ref) {
+    setTimeout(() => {
+      const node = ReactDOM.findDOMNode(ref.current);
+      node.style.backgroundColor = color;
+    });
+    return <WrappedComponent {...props} ref={ref} />;
+  };
+```
+`ref` will always be provided as a param for functional directives. It may originate from a directive higher up the chain, so ensure to always pass it off to the wrapped component.
+
+> #### alert-time-onclick.directive.jsx
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+export default (WrappedComponent) => () =>
+  class AlertTimeOnClick extends React.Component {
+    constructor(props) {
+      super(props);
+      this.ref = React.createRef();
+    }
+
+    componentDidMount() {
+      const node = ReactDOM.findDOMNode(this.ref.current);
+      node.addEventListener('click', () => {
+        alert(new Date());
+      });
+    }
+
+    render() { return <WrappedComponent {...this.props} ref={this.ref} />; }
+  };
 ```
 
 > #### inject-directives.jsx
 ```jsx
 import ReactDirectives from 'react-attribute-directives';
-import appHighlight from './app-highlight.directive';
+import highlight from './highlight.directive';
+import alertTimeOnClick from './alert-time-onclick.directive';
 
-export default ReactDirectives((component) => ({
-  appHighlight: appHighlight(component)
-}));
-
+export default ReactDirectives({
+  highlight,
+  alertTimeOnClick
+});
 ```
 
 > #### my-component.jsx
@@ -40,35 +70,35 @@ import InjectDirectives from '../directives/inject-directives';
 
 class MyComponent extends React.Component {
   render() {
-    return <div />;
+    return <div {...this.props} />;
   }
 }
 export default InjectDirectives(MyComponent);
 ```
 
-> #### my-functional-component.jsx
-```jsx
-import React from 'react';
-import InjectDirectives from '../directives/inject-directives';
-
-function MyFunctionalComponent(props) {
-  return <div ref={props.directiveRef} />; // Explicit ref required
-}
-export default InjectDirectives(MyFunctionalComponent);
-```
-
 > #### App.js
 ```jsx
 import React, { Component } from 'react';
+import './App.css';
 import MyComponent from './app/components/my-component';
-import MyClassComponent from './app/components/my-class-component';
 
 class App extends Component {
+  state = {
+    componentColor: 'red'
+  }
+
+  toggleComponentColor = () => {
+    this.setState({ componentColor: this.state.componentColor === 'red' ? 'blue' : 'red' });
+  }
+
   render() {
     return (
       <div className="App">
-        <MyComponent appHighlight='red' />
-        <MyFunctionalComponent appHighlight='blue' />
+        <MyComponent
+          highlight={this.state.componentColor}
+          alertTimeOnClick
+          onClick={this.toggleComponentColor}
+        />
       </div>
     );
   }

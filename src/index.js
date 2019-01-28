@@ -2,21 +2,34 @@ import React from 'react';
 
 export default function(directives) {
 
-  return function(WrappedComponent) {
+  return function InjectDirectives(WrappedComponent) {
 
-    return function InjectDirectives(props) {
-      const initDirectives = (ref) => {
-        for (const key in props) {
-          if (props.hasOwnProperty(key) && typeof directives(ref)[key] === 'function') {
-            directives(ref)[key](props[key]);
+    return function(props) {
+      for (const key in props) {
+        const directive = directives[key];
+        if (props.hasOwnProperty(key) && typeof directive === 'function') {
+          const value = props[key] !== true ? props[key] : null
+          let DirectiveComponent = directive(WrappedComponent)(value);
+
+          props = { ...props };
+          delete props[key];
+
+          if (!DirectiveComponent.prototype.render) {
+            DirectiveComponent = (DirectiveComponent =>
+              React.forwardRef((props, ref) => {
+                if (!ref || typeof ref !== 'object') {
+                  ref = React.createRef();
+                }
+                const WrappedDirective = React.forwardRef(DirectiveComponent);
+                return <WrappedDirective {...props} ref={ref} />;
+              }))(DirectiveComponent);
           }
+
+          return InjectDirectives(DirectiveComponent)(props);
         }
       }
-      const handleRef = (r) => initDirectives(r);
-      const isFunctional = !WrappedComponent.prototype.render;
-      const refProp = { [isFunctional ? 'directiveRef' : 'ref']: handleRef };
-
-      return <WrappedComponent {...refProp} {...props} />;
+      const ref = React.createRef();
+      return <WrappedComponent {...props} ref={ref} />;
     }
   }
 }
