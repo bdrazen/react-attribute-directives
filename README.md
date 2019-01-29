@@ -12,6 +12,10 @@ npm install --save react-attribute-directives
 
 ## Usage
 
+https://github.com/DBjelovuk/react-attribute-directives/tree/gh-pages
+
+<br>
+
 > #### highlight.directive.jsx
 ```jsx
 import React from 'react';
