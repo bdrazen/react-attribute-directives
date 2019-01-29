@@ -8,7 +8,7 @@ export default function(directives) {
       for (const key in props) {
         const directive = directives[key];
         if (props.hasOwnProperty(key) && typeof directive === 'function') {
-          const value = props[key] !== true ? props[key] : null
+          const value = props[key] === true ? null : props[key];
           let DirectiveComponent = directive(WrappedComponent)(value);
 
           props = { ...props };
